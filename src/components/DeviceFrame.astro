@@ -1,0 +1,36 @@
+---
+// Marcos de dispositivo en CSS puro (sin imágenes): laptop, teléfono o ambos superpuestos.
+import DemoScreen from './DemoScreen.astro';
+import type { Project } from '../data/projects';
+
+interface Props { project: Project; eager?: boolean }
+const { project, eager = false } = Astro.props;
+const m = project.media ?? {};
+const mob = project.media?.mobile ?? (project.device === 'phone' ? m : {});
+---
+<div class:list={['device relative', project.device === 'phone' ? 'mx-auto max-w-[240px]' : 'w-full']}>
+  {project.device !== 'phone' && (
+    <div class="laptop px-[4%]">
+      <div class="rounded-t-[14px] border border-line bg-[#05080f] p-[1.6%] pb-[2.2%] shadow-[0_40px_90px_-40px_rgb(0_0_0/0.9)]">
+        <div class="aspect-[16/10] overflow-hidden rounded-[6px]">
+          <DemoScreen {...m} hue={project.hue} label={project.title} eager={eager} slug={project.slug} />
+        </div>
+      </div>
+      <div class="relative mx-[-4%] h-[10px] rounded-b-[12px] bg-gradient-to-b from-[#2a3346] to-[#151b28] sm:h-[14px]">
+        <span class="absolute left-1/2 top-0 h-[40%] w-[14%] -translate-x-1/2 rounded-b-md bg-[#0d121c]"></span>
+      </div>
+    </div>
+  )}
+
+  {project.device !== 'laptop' && (
+    <div class:list={[
+      'phone rounded-[2.2rem] border border-line bg-[#05080f] p-[7px] shadow-[0_30px_70px_-25px_rgb(0_0_0/0.95)]',
+      project.device === 'both' ? 'absolute -bottom-6 right-[-2%] w-[24%] min-w-[92px] sm:right-[-4%]' : 'w-full',
+    ]}>
+      <div class="relative aspect-[9/19.5] overflow-hidden rounded-[1.75rem]">
+        <span class="absolute left-1/2 top-[1.6%] z-10 h-[3.2%] w-[30%] -translate-x-1/2 rounded-full bg-[#05080f]"></span>
+        <DemoScreen {...mob} hue={project.hue} label={`${project.title} en móvil`} orientation="portrait" slug={project.slug} />
+      </div>
+    </div>
+  )}
+</div>

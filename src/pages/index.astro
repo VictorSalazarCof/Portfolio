@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Projects from '../components/Projects.astro';
+import Capabilities from '../components/Capabilities.astro';
+import Process from '../components/Process.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+<Base
+  title="Víctor Salazar · Desarrollo web y automatización"
+  description="Desarrollo web a medida, e-commerce y automatización de procesos para empresas en Chile. Demos en vivo y casos reales."
+>
+  <Nav />
+  <main>
+    <Hero />
+    <Projects />
+    <Capabilities />
+    <Process />
+    <Contact />
+  </main>
+  <Footer />
+  <script>
+    import '../scripts/demos.ts';
+    import '../scripts/contact.ts';
+  </script>
+</Base>

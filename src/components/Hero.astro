@@ -1,0 +1,116 @@
+---
+// Hero: propuesta de valor a la izquierda y una "consola de demos" a la derecha que
+// rota por los proyectos reales. Es el único momento de animación automática de la página.
+import DemoScreen from './DemoScreen.astro';
+import MessageCircle from '@lucide/astro/icons/message-circle';
+import { projects } from '../data/projects';
+
+const reel = projects.slice(0, 4);
+---
+<section id="inicio" class="relative isolate overflow-hidden pt-28 pb-20 sm:pt-36 lg:pb-28">
+  <div class="dot-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute right-[-10%] top-[8%] -z-10 h-[520px] w-[720px] rounded-full bg-signal-deep/25 blur-[120px]" aria-hidden="true"></div>
+
+  <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12">
+    <div class="min-w-0 lg:col-span-6">
+      <p class="enter inline-flex items-start gap-2 rounded-2xl border border-line bg-ink-2/60 px-3 py-1.5 text-sm text-muted sm:items-center sm:rounded-full" style="--i:0">
+        <span class="live-dot mt-1.5 size-2 shrink-0 rounded-full bg-live sm:mt-0"></span>
+        <span>Práctica profesional en <span class="font-semibold text-fg">Accenture</span> · Disponible para proyectos freelance</span>
+      </p>
+
+      <h1 class="enter mt-6 font-display text-[clamp(2.4rem,4.3vw,3.5rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-balance" style="--i:1">
+        Sitios y automatizaciones que trabajan mientras tú atiendes tu negocio.
+      </h1>
+
+      <p class="enter mt-6 max-w-[46ch] text-lg text-muted text-pretty" style="--i:2">
+        Desarrollo web a medida, e-commerce y automatización de procesos para empresas en Chile.
+        Del primer boceto al despliegue, con código que tu equipo puede mantener.
+      </p>
+
+      <div class="enter mt-9 flex flex-wrap items-center gap-3" style="--i:3">
+        <a href="#proyectos" class="rounded-xl bg-signal px-5 py-3 font-semibold text-ink transition hover:bg-fg">
+          Ver demos en vivo
+        </a>
+        <a href="#contacto" class="inline-flex items-center gap-2 rounded-xl border border-line px-5 py-3 font-semibold transition hover:border-signal/60 hover:bg-white/5">
+          <MessageCircle class="size-4 text-signal" aria-hidden="true" />
+          Cotiza tu proyecto
+        </a>
+      </div>
+
+      <p class="enter mt-10 text-sm text-muted" style="--i:4">
+        Han confiado en mi trabajo <span class="text-fg">Rediseña SpA</span>, <span class="text-fg">GeoConexión</span> y locales de comida en Santiago.
+      </p>
+    </div>
+
+    <!-- Consola de demos -->
+    <div class="enter-window min-w-0 lg:col-span-6" data-reel>
+      <div class="glass overflow-hidden rounded-2xl">
+        <div class="flex items-center gap-3 border-b border-line px-3 py-2.5 sm:px-4">
+          <div class="flex gap-1.5" aria-hidden="true">
+            <span class="size-2.5 rounded-full bg-[#ff5f57]"></span><span class="size-2.5 rounded-full bg-[#febc2e]"></span><span class="size-2.5 rounded-full bg-[#28c840]"></span>
+          </div>
+          <div class="no-scrollbar -mb-px flex flex-1 gap-1 overflow-x-auto" role="tablist" aria-label="Demos de proyectos">
+            {reel.map((p, i) => (
+              <button
+                type="button"
+                role="tab"
+                id={`reel-tab-${p.slug}`}
+                aria-controls={`reel-panel-${p.slug}`}
+                aria-selected={i === 0 ? 'true' : 'false'}
+                tabindex={i === 0 ? 0 : -1}
+                class="reel-tab relative shrink-0 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap text-muted transition hover:text-fg aria-selected:bg-white/[0.07] aria-selected:text-fg"
+                data-reel-tab
+              >
+                {p.short}
+                <span class="reel-progress absolute inset-x-3 bottom-0.5 h-px origin-left scale-x-0 bg-signal" aria-hidden="true"></span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="relative aspect-[16/10]">
+          {reel.map((p, i) => (
+            <div
+              id={`reel-panel-${p.slug}`}
+              role="tabpanel"
+              aria-labelledby={`reel-tab-${p.slug}`}
+              class="reel-panel absolute inset-0 transition-opacity duration-500"
+              data-reel-panel
+              hidden={i !== 0}
+            >
+              <DemoScreen {...p.media} hue={p.hue} label={p.title} eager={i === 0} slug={p.slug} />
+            </div>
+          ))}
+        </div>
+
+        <!-- Barra de estado: todas las variantes ocupan la misma celda para que la altura no salte al cambiar de pestaña -->
+        <div class="grid border-t border-line px-4 py-2.5 font-mono text-[0.72rem] leading-relaxed">
+          <div class="grid gap-1 [grid-area:1/1]">
+            <span class="flex items-center gap-2 text-fg/85">
+              <span class="size-1.5 shrink-0 rounded-full bg-live"></span>
+              <span data-reel-kind>{reel[0].kind}</span>
+            </span>
+            <span class="pl-3.5 text-muted text-pretty" data-reel-stack>{reel[0].stack.join(' · ')}</span>
+          </div>
+          {reel.map((p) => (
+            <div class="invisible grid gap-1 [grid-area:1/1]" aria-hidden="true">
+              <span class="pl-3.5">{p.kind}</span>
+              <span class="pl-3.5 text-pretty">{p.stack.join(' · ')}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <script type="application/json" data-reel-meta set:html={JSON.stringify(reel.map((p) => ({ kind: p.kind, stack: p.stack.join(' · ') })))} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .reel-tab[aria-selected='true'] .reel-progress { animation: progress var(--reel-ms, 7000ms) linear forwards; }
+  [data-reel].is-paused .reel-tab[aria-selected='true'] .reel-progress { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-tab[aria-selected='true'] .reel-progress { animation: none; transform: scaleX(1); }
+  }
+</style>

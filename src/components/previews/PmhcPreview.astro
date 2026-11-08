@@ -1,0 +1,51 @@
+---
+// Dashboard de tesis PMHC: mapa real de las 52 comunas de la RM coloreado por cuartil
+// de riesgo predicho 2024, con selector de año y ranking.
+import { comunas, viewBox, avg2024 } from '../../data/pmhc-map';
+interface Props { orientation: 'landscape' | 'portrait' }
+const { orientation } = Astro.props;
+const tier = ['#0ca30c', '#fab219', '#ec835a', '#d03b3b'];
+const top = [...comunas].sort((a, b) => b.r - a.r).slice(0, 5);
+const pct = (v: number) => `${(v * 100).toFixed(1).replace('.', ',')}%`;
+const serif = "font-family:Georgia,'Times New Roman',serif";
+---
+{orientation === 'landscape' ? (
+  <svg viewBox="0 0 320 200" class="h-full w-full" aria-hidden="true">
+    <rect width="320" height="200" fill="#f2f3f5"/>
+    <text x="10" y="12" fill="#6f4c0c" font-size="3.6" font-weight="700" letter-spacing=".3">TRABAJO DE TÍTULO · PMHC</text>
+    <text x="10" y="23" fill="#14181f" style={serif} font-size="9" font-weight="600">Riesgo de hacinamiento crítico por comuna</text>
+    <rect x="252" y="8" width="58" height="9" rx="4.5" fill="#f1e4cf" stroke="#8f6110" stroke-width=".5"/><text x="281" y="14" text-anchor="middle" fill="#6f4c0c" font-size="3.8" font-weight="700">Modelo Random Forest</text>
+    <g transform="translate(10 32)">
+      <rect width="56" height="66" rx="4" fill="#fff" stroke="#d8dce2" stroke-width=".5"/>
+      <text x="6" y="10" fill="#545c68" font-size="3.6" font-weight="700">CORTE TEMPORAL</text>
+      {['2017', '2022', '2024'].map((y, i) => <g><rect x="6" y={15 + i * 15} width="44" height="11" rx="2.5" fill={i === 2 ? '#8f6110' : '#fff'} stroke={i === 2 ? '#8f6110' : '#d8dce2'} stroke-width=".5"/><text x="10" y={22.3 + i * 15} fill={i === 2 ? '#fff' : '#14181f'} font-size="5">{y}</text></g>)}
+      <rect y="72" width="56" height="88" rx="4" fill="#fff" stroke="#d8dce2" stroke-width=".5"/>
+      <text x="6" y="82" fill="#545c68" font-size="3.6" font-weight="700">ESCALA</text>
+      {['Bajo', 'Medio', 'Alto', 'Crítico'].map((l, i) => <g><rect x="6" y={88 + i * 15} width="16" height="7" rx="3.5" fill={tier[i]}/><text x="26" y={93.4 + i * 15} fill="#545c68" font-size="4.2">{l}</text></g>)}
+    </g>
+    <g transform="translate(72 32)">
+      <rect width="150" height="160" rx="4" fill="#fff" stroke="#d8dce2" stroke-width=".5"/>
+      <text x="6" y="10" fill="#545c68" font-size="3.6" font-weight="700">52 COMUNAS · REGIÓN METROPOLITANA</text>
+      <text x="144" y="11" text-anchor="end" fill="#14181f" font-size="7" font-weight="700">{pct(avg2024)}</text>
+      <svg x="6" y="16" width="138" height="140" viewBox={viewBox}>
+        {comunas.map((c) => <path d={c.d} fill={tier[c.t]} stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/>)}
+      </svg>
+    </g>
+    <g transform="translate(228 32)">
+      <rect width="82" height="160" rx="4" fill="#fff" stroke="#d8dce2" stroke-width=".5"/>
+      <text x="6" y="10" fill="#545c68" font-size="3.6" font-weight="700">MAYOR RIESGO · 2024</text>
+      {top.map((c, i) => <g transform={`translate(6 ${18 + i * 18})`}><text fill="#838b96" font-size="3.8" y="4">{i + 1}</text><text x="6" y="4" fill="#14181f" font-size="4.4">{c.n}</text><text x="70" y="4" text-anchor="end" fill="#14181f" font-size="4.4" font-weight="700">{pct(c.r)}</text><rect x="6" y="7" width="64" height="2" rx="1" fill="#e7e9ed"/><rect x="6" y="7" width={64 * c.r / top[0].r} height="2" rx="1" fill="#d03b3b"/></g>)}
+      <line x1="6" y1="112" x2="76" y2="112" stroke="#d8dce2" stroke-width=".5"/>
+      <text x="6" y="122" fill="#545c68" font-size="3.6" font-weight="700">ASISTENTE</text>
+      <rect x="20" y="127" width="56" height="9" rx="3" fill="#8f6110"/><text x="24" y="133" fill="#fff" font-size="3.6">¿Qué significa cada color?</text>
+      <rect x="6" y="140" width="62" height="13" rx="3" fill="#e7e9ed"/><text x="10" y="146" fill="#14181f" font-size="3.4">Cada color es un cuartil del</text><text x="10" y="150.5" fill="#14181f" font-size="3.4">riesgo predicho en la RM.</text>
+    </g>
+  </svg>
+) : (
+  <svg viewBox="0 0 180 390" class="h-full w-full" aria-hidden="true">
+    <rect width="180" height="390" fill="#f2f3f5"/>
+    <text x="12" y="56" fill="#14181f" style={serif} font-size="12" font-weight="600">Riesgo por comuna</text>
+    <svg x="10" y="70" width="160" height="150" viewBox={viewBox}>{comunas.map((c) => <path d={c.d} fill={tier[c.t]} stroke="#fff" stroke-width="1.4"/>)}</svg>
+    {top.map((c, i) => <g transform={`translate(12 ${240 + i * 26})`}><text fill="#14181f" font-size="7">{c.n}</text><text x="156" text-anchor="end" fill="#14181f" font-size="7" font-weight="700">{pct(c.r)}</text><rect y="6" width="156" height="3" rx="1.5" fill="#e7e9ed"/><rect y="6" width={156 * c.r / top[0].r} height="3" rx="1.5" fill="#d03b3b"/></g>)}
+  </svg>
+)}

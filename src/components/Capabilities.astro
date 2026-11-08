@@ -1,0 +1,53 @@
+---
+// Capacidades agrupadas por área de solución. Cada área enlaza a los casos donde se aplicó.
+import { capabilities } from '../data/capabilities';
+import { projects } from '../data/projects';
+const name = (slug: string) => projects.find((p) => p.slug === slug)?.short ?? slug;
+---
+<section id="capacidades" class="relative border-t border-line py-24 sm:py-32" aria-labelledby="capacidades-title">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-14 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12">
+    <div class="min-w-0 lg:col-span-4">
+      <div class="lg:sticky lg:top-28">
+        <h2 id="capacidades-title" class="font-display text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
+          Qué puedo resolver
+        </h2>
+        <p class="mt-4 text-lg text-muted text-pretty">
+          Organizado por el tipo de problema, no por lenguaje. Cada área enlaza a un caso real donde la apliqué.
+        </p>
+      </div>
+    </div>
+
+    <ol class="min-w-0 divide-y divide-line border-y border-line lg:col-span-8">
+      {capabilities.map((c) => (
+        <li class="grid gap-6 py-10 sm:grid-cols-[1fr_1fr] sm:gap-x-10" id={`cap-${c.id}`}>
+          <div class="sm:col-span-2">
+            <h3 class="font-display text-[clamp(1.4rem,2.2vw,1.75rem)] font-semibold tracking-[-0.02em]">{c.title}</h3>
+            <p class="mt-2 max-w-[60ch] text-muted text-pretty">{c.solves}</p>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-fg">Qué entrego</p>
+            <ul class="mt-3 space-y-2 text-[0.98rem] text-muted">
+              {c.delivers.map((d) => (
+                <li class="flex gap-2.5"><span class="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-signal" aria-hidden="true"></span>{d}</li>
+              ))}
+            </ul>
+          </div>
+          <div class="flex flex-col gap-6">
+            <div>
+              <p class="text-sm font-semibold text-fg">Herramientas</p>
+              <ul class="mt-3 flex flex-wrap gap-2" aria-label={`Herramientas de ${c.title}`}>
+                {c.tools.map((t) => <li class="rounded-md border border-line bg-ink-2 px-2.5 py-1 font-mono text-[0.75rem] text-fg/85">{t}</li>)}
+              </ul>
+            </div>
+            <p class="text-sm text-muted">
+              Aplicado en{' '}
+              {c.seenIn.map((s, i) => (
+                <>{i > 0 && (i === c.seenIn.length - 1 ? ' y ' : ', ')}<a href={`#case-${s}`} class="font-semibold text-signal underline decoration-signal/30 underline-offset-4 hover:decoration-signal">{name(s)}</a></>
+              ))}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

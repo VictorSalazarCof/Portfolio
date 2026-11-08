@@ -1,0 +1,77 @@
+---
+// Pedidos por WhatsApp: carta oscura con amarillo de marca, tamaños por precio y carrito.
+// Marca genérica ("Tu Local"): el producto se personaliza por cliente.
+interface Props { orientation: 'landscape' | 'portrait' }
+const { orientation } = Astro.props;
+const brush = "font-family:'Bricolage Grotesque Variable',sans-serif;font-weight:800";
+const items = [
+  { n: 'Completo italiano', d: 'Tomate, palta y mayo casera', p: ['$2.500', '$3.500', '$4.500'] },
+  { n: 'Churrasco luco', d: 'Queso', p: ['$4.990', '$8.790'] },
+  { n: 'Chacarero', d: 'Tomate, poroto verde, ají', p: ['$3.000', '$3.700', '$4.500'] },
+  { n: 'Papas fritas', d: 'Chica, mediana o familiar', p: ['$1.000', '$3.000', '$5.000'] },
+];
+const cats = ['Combos', 'Completos', 'Churrascos', 'Papas', 'Bebidas'];
+---
+{orientation === 'portrait' ? (
+  <svg viewBox="0 0 180 390" class="h-full w-full" aria-hidden="true">
+    <rect width="180" height="390" fill="#0a0a0a"/>
+    <text x="14" y="42" fill="#fff" style={brush} font-size="13">Local Centro</text>
+    <rect x="14" y="49" width="58" height="10" rx="5" fill="#16a34a" fill-opacity=".18"/><circle cx="20" cy="54" r="1.8" fill="#22c55e"/><text x="25" y="56.4" fill="#4ade80" font-size="5.4" font-weight="600">Abierto hasta 23:30</text>
+    <g font-size="6.4" font-weight="700">
+      {cats.slice(0, 4).map((c, i) => {
+        const x = 14 + i * 40;
+        return <g><rect x={x} y="68" width="37" height="14" rx="7" fill={i === 1 ? '#f5b800' : '#1c1c1c'}/><text x={x + 18.5} y="77.4" text-anchor="middle" fill={i === 1 ? '#111' : '#ddd'}>{c}</text></g>;
+      })}
+    </g>
+    <g transform="translate(14 96)"><path d="M0 2 L70 0 L66 14 L2 15 Z" fill="#f5b800"/><text x="6" y="11" fill="#111" style={brush} font-size="9.5">COMPLETOS</text></g>
+    {items.map((it, i) => {
+      const y = 126 + i * 50;
+      return (
+        <g>
+          <circle cx="30" cy={y + 14} r="14" fill="#2a2018"/><ellipse cx="30" cy={y + 14} rx="11" ry="4.5" fill="#d9a35b"/><ellipse cx="30" cy={y + 12} rx="9" ry="2.4" fill="#e85d3f"/>
+          <text x="52" y={y + 10} fill="#fff" font-size="7.6" font-weight="700">{it.n}</text>
+          <text x="52" y={y + 19} fill="#9a9a9a" font-size="5.6">{it.d}</text>
+          {it.p.map((p, j) => <g><rect x={52 + j * 36} y={y + 25} width="33" height="12" rx="6" fill="none" stroke="#f5b800" stroke-width=".9"/><text x={68.5 + j * 36} y={y + 33.2} text-anchor="middle" fill="#f5b800" font-size="6" font-weight="700">{p}</text></g>)}
+        </g>
+      );
+    })}
+    <rect x="10" y="336" width="160" height="34" rx="10" fill="#22c55e"/>
+    <text x="22" y="350" fill="#052e12" font-size="6.4" font-weight="600">4 productos</text>
+    <text x="22" y="361" fill="#052e12" font-size="9" font-weight="800">$11.980</text>
+    <text x="160" y="357" text-anchor="end" fill="#052e12" font-size="7.6" font-weight="800">Enviar por WhatsApp</text>
+  </svg>
+) : (
+  <svg viewBox="0 0 320 200" class="h-full w-full" aria-hidden="true">
+    <rect width="320" height="200" fill="#0a0a0a"/>
+    <text x="14" y="20" fill="#fff" style={brush} font-size="11">Local Centro</text>
+    <rect x="14" y="25" width="50" height="8" rx="4" fill="#16a34a" fill-opacity=".18"/><circle cx="19" cy="29" r="1.5" fill="#22c55e"/><text x="23" y="31" fill="#4ade80" font-size="4.6" font-weight="600">Abierto hasta 23:30</text>
+    <g font-size="5" font-weight="700">
+      {cats.map((c, i) => {
+        const x = 14 + i * 36;
+        return <g><rect x={x} y="40" width="33" height="11" rx="5.5" fill={i === 1 ? '#f5b800' : '#1c1c1c'}/><text x={x + 16.5} y="47.4" text-anchor="middle" fill={i === 1 ? '#111' : '#ddd'}>{c}</text></g>;
+      })}
+    </g>
+    <g transform="translate(14 60)"><path d="M0 1.5 L56 0 L53 11 L1.5 12 Z" fill="#f5b800"/><text x="5" y="9" fill="#111" style={brush} font-size="7.5">COMPLETOS</text></g>
+    {items.slice(0, 4).map((it, i) => {
+      const y = 80 + i * 29;
+      return (
+        <g>
+          <rect x="14" y={y} width="190" height="25" rx="4" fill="#141414"/>
+          <circle cx="27" cy={y + 12.5} r="8.5" fill="#2a2018"/><ellipse cx="27" cy={y + 12.5} rx="7" ry="3" fill="#d9a35b"/><ellipse cx="27" cy={y + 11.5} rx="5.5" ry="1.6" fill="#e85d3f"/>
+          <text x="40" y={y + 10.5} fill="#fff" font-size="5.8" font-weight="700">{it.n}</text>
+          <text x="40" y={y + 18} fill="#9a9a9a" font-size="4.4">{it.d}</text>
+          {it.p.map((p, j) => <g><rect x={120 + j * 28} y={y + 7} width="25" height="10" rx="5" fill="none" stroke="#f5b800" stroke-width=".7"/><text x={132.5 + j * 28} y={y + 13.8} text-anchor="middle" fill="#f5b800" font-size="4.6" font-weight="700">{p}</text></g>)}
+        </g>
+      );
+    })}
+    <g transform="translate(214 40)">
+      <rect width="94" height="148" rx="6" fill="#141414" stroke="#262626" stroke-width=".6"/>
+      <text x="8" y="14" fill="#fff" font-size="7" font-weight="800">Tu pedido</text>
+      <g font-size="4.8" fill="#ddd"><text x="8" y="30">1 × Italiano grande</text><text x="86" y="30" text-anchor="end">$3.500</text><text x="8" y="42">1 × Churrasco luco</text><text x="86" y="42" text-anchor="end">$4.990</text><text x="8" y="54">1 × Papas medianas</text><text x="86" y="54" text-anchor="end">$3.000</text><text x="8" y="66" fill="#9a9a9a">+ Mayo ajo chica</text><text x="86" y="66" text-anchor="end" fill="#9a9a9a">$490</text></g>
+      <line x1="8" y1="76" x2="86" y2="76" stroke="#2a2a2a"/>
+      <text x="8" y="90" fill="#9a9a9a" font-size="4.8">Total</text><text x="86" y="90" text-anchor="end" fill="#fff" font-size="8" font-weight="800">$11.980</text>
+      <rect x="8" y="100" width="78" height="10" rx="2" fill="#1c1c1c"/><text x="12" y="106.6" fill="#777" font-size="4.2">Nota: sin cebolla…</text>
+      <rect x="8" y="122" width="78" height="16" rx="5" fill="#22c55e"/><text x="47" y="132.4" text-anchor="middle" fill="#052e12" font-size="5.6" font-weight="800">Enviar por WhatsApp</text>
+    </g>
+  </svg>
+)}

@@ -1,0 +1,78 @@
+---
+// GeoConexión: resumen diario automático de noticias.
+// Flujo Google Alerts → Apps Script → documento del día → Gemini, y el boletín de marca resultante.
+interface Props { orientation: 'landscape' | 'portrait' }
+const { orientation } = Astro.props;
+const c = { bg: '#f7f5f2', surface: '#ffffff', ink: '#3a3a38', muted: '#6e6a64', line: '#e2ddd5', accent: '#b01e3c', soft: '#f6e3e7', ok: '#2e7d4f', okBg: '#e3f1e8', warn: '#c08a12', warnBg: '#fbf0d6' };
+const flow = [
+  { t: 'Google Alerts', d: '6 temas por correo' },
+  { t: 'Apps Script', d: 'Agrupa y filtra' },
+  { t: 'Documento del día', d: 'Un clic, mismo link' },
+  { t: 'Gemini', d: 'Llena la plantilla' },
+];
+const cats = [
+  { t: 'Vías y bloqueos', s: 'Alerta', k: 'warn', n: 4 },
+  { t: 'Sismos', s: 'Sin alerta', k: 'ok', n: 0 },
+  { t: 'Clima / UV', s: 'Alerta', k: 'warn', n: 3 },
+  { t: 'Seguridad', s: 'Sin alerta', k: 'ok', n: 1 },
+  { t: 'Infraestructura', s: 'Sin alerta', k: 'ok', n: 0 },
+  { t: 'Contingencia social', s: 'Alerta', k: 'warn', n: 2 },
+] as const;
+const display = "font-family:'Bricolage Grotesque Variable',sans-serif;font-weight:700";
+---
+{orientation === 'landscape' ? (
+  <svg viewBox="0 0 320 200" class="h-full w-full" aria-hidden="true">
+    <rect width="320" height="200" fill={c.bg}/>
+    <text x="12" y="16" fill={c.muted} font-size="3.8" font-weight="700">PROCESO AUTOMATIZADO · CADA DÍA</text>
+    <text x="12" y="27" fill={c.ink} style={display} font-size="9">De la alerta al boletín</text>
+    {flow.map((f, i) => (
+      <g transform={`translate(12 ${38 + i * 36})`}>
+        <rect width="118" height="28" rx="4" fill={c.surface} stroke={i === 3 ? c.accent : c.line} stroke-width={i === 3 ? 0.9 : 0.5}/>
+        <circle cx="13" cy="14" r="7" fill={i === 3 ? c.accent : c.soft}/>
+        <text x="13" y="16.4" text-anchor="middle" fill={i === 3 ? '#fff' : c.accent} font-size="6" font-weight="800">{i + 1}</text>
+        <text x="26" y="12.6" fill={c.ink} font-size="5.6" font-weight="700">{f.t}</text>
+        <text x="26" y="20.6" fill={c.muted} font-size="4.4">{f.d}</text>
+        {i < 3 && <path d={`M13 29 v6`} stroke={c.accent} stroke-width=".9" stroke-dasharray="1.6 1.4"/>}
+      </g>
+    ))}
+    <path d="M134 154 C 150 154, 150 100, 168 100" fill="none" stroke={c.accent} stroke-width=".9" stroke-dasharray="1.6 1.4"/>
+    <path d="M165 97.5 l3.4 2.5 l-3.4 2.5" fill="none" stroke={c.accent} stroke-width=".9"/>
+    <g transform="translate(172 10)">
+      <rect width="136" height="182" rx="2" fill={c.surface} stroke={c.line} stroke-width=".5"/>
+      <rect width="136" height="30" fill={c.accent}/>
+      <path d="M14 24 L8 17 A7 7 0 1 1 20 17 Z" fill="#fff"/>
+      <text x="14" y="16.2" text-anchor="middle" fill={c.accent} font-size="4" font-weight="800">GC</text>
+      <text x="26" y="13" fill="#fff" style={display} font-size="7.4">BOLETÍN SITUACIONAL</text>
+      <text x="26" y="21" fill="#fff" fill-opacity=".85" font-size="4">Infórmate al instante · 07:00 hrs</text>
+      {cats.map((k, i) => {
+        const x = 6 + (i % 2) * 63;
+        const y = 36 + Math.floor(i / 2) * 34;
+        const ok = k.k === 'ok';
+        return (
+          <g transform={`translate(${x} ${y})`}>
+            <rect width="60" height="30" rx="3" fill={c.bg}/>
+            <text x="5" y="9" fill={c.ink} font-size="4.6" font-weight="700">{k.t}</text>
+            <rect x="5" y="13" width={ok ? 26 : 20} height="7" rx="3.5" fill={ok ? c.okBg : c.warnBg}/>
+            <text x={ok ? 18 : 15} y="17.8" text-anchor="middle" fill={ok ? c.ok : c.warn} font-size="3.8" font-weight="700">{k.s}</text>
+            <text x="54" y="22" text-anchor="end" fill={c.ink} style={display} font-size="9">{k.n}</text>
+          </g>
+        );
+      })}
+      <text x="6" y="146" fill={c.muted} font-size="3.8" font-weight="700">NOTICIAS RELEVANTES</text>
+      <rect x="6" y="151" width="124" height="3" rx="1.5" fill={c.line}/>
+      <rect x="6" y="158" width="104" height="3" rx="1.5" fill={c.line}/>
+      <rect x="6" y="165" width="114" height="3" rx="1.5" fill={c.line}/>
+      <rect x="92" y="172" width="38" height="7" rx="3.5" fill={c.okBg}/><text x="111" y="176.8" text-anchor="middle" fill={c.ok} font-size="3.8" font-weight="700">Revisado</text>
+    </g>
+  </svg>
+) : (
+  <svg viewBox="0 0 180 390" class="h-full w-full" aria-hidden="true">
+    <rect width="180" height="390" fill={c.bg}/>
+    <rect y="0" width="180" height="70" fill={c.accent}/>
+    <text x="14" y="52" fill="#fff" style={display} font-size="12">Boletín situacional</text>
+    {cats.map((k, i) => {
+      const ok = k.k === 'ok';
+      return <g transform={`translate(14 ${86 + i * 46})`}><rect width="152" height="40" rx="5" fill={c.surface}/><text x="10" y="17" fill={c.ink} font-size="8" font-weight="700">{k.t}</text><text x="10" y="30" fill={ok ? c.ok : c.warn} font-size="6.4" font-weight="700">{k.s}</text><text x="142" y="27" text-anchor="end" fill={c.ink} style={display} font-size="14">{k.n}</text></g>;
+    })}
+  </svg>
+)}

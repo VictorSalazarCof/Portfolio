@@ -1,0 +1,101 @@
+---
+// Pantalla de demo: video en loop sin audio si existe, o un marcador con la paleta del proyecto.
+// El video NO se descarga al cargar la página (preload="none"); el script lo reproduce
+// solo cuando la pantalla entra en el viewport y lo pausa al salir.
+import Pause from '@lucide/astro/icons/pause';
+import Play from '@lucide/astro/icons/play';
+import Preview from './previews/Preview.astro';
+import type { Project } from '../data/projects';
+
+interface Props {
+  webm?: string;
+  mp4?: string;
+  poster?: string;
+  hue: number;
+  label: string;
+  orientation?: 'landscape' | 'portrait';
+  eager?: boolean; // true en el hero: el poster se carga con prioridad
+  slug?: Project['slug']; // vista previa ilustrada mientras no hay video
+}
+const { webm, mp4, poster, hue, label, orientation = 'landscape', eager = false, slug } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const src = (p?: string) => (p ? `${base}/${p.replace(/^\//, '')}` : undefined);
+const hasVideo = Boolean(webm || mp4);
+---
+<div class="demo-screen relative h-full w-full overflow-hidden bg-ink-2" style={`--h:${hue}`} data-demo-screen>
+  {hasVideo ? (
+    <>
+      <video
+        class="h-full w-full object-cover object-top"
+        muted
+        loop
+        playsinline
+        preload="none"
+        poster={src(poster)}
+        aria-label={`Demo en video de ${label}`}
+        data-demo
+        {...(eager ? { fetchpriority: 'high' } : {})}
+      >
+        {webm && <source src={src(webm)} type="video/webm" />}
+        {mp4 && <source src={src(mp4)} type="video/mp4" />}
+      </video>
+      <button
+        type="button"
+        class="absolute bottom-3 right-3 grid size-8 place-items-center rounded-full bg-ink/70 text-fg ring-1 ring-line backdrop-blur transition hover:bg-ink"
+        aria-label="Pausar demo"
+        data-demo-toggle
+      >
+        <Pause class="size-3.5 [[aria-pressed=true]>&]:hidden" stroke-width={2.2} />
+        <Play class="hidden size-3.5 [[aria-pressed=true]>&]:block" stroke-width={2.2} />
+      </button>
+    </>
+  ) : slug ? (
+    <div class="absolute inset-0" role="img" aria-label={`Vista previa ilustrada de ${label}`}>
+      <Preview slug={slug} orientation={orientation} />
+    </div>
+  ) : (
+    <div class="placeholder absolute inset-0" role="img" aria-label={`Vista previa de ${label}, demo en preparación`}>
+      {orientation === 'landscape' ? (
+        <div class="flex h-full gap-[3%] p-[4%]">
+          <div class="hidden w-[18%] flex-col gap-2 sm:flex">
+            <span class="ph-bar w-3/4"></span><span class="ph-bar w-1/2 opacity-60"></span>
+            <span class="ph-bar w-2/3 opacity-60"></span><span class="ph-bar w-1/2 opacity-60"></span>
+          </div>
+          <div class="flex flex-1 flex-col gap-[4%]">
+            <span class="ph-bar h-[9%] w-2/5"></span>
+            <div class="grid flex-1 grid-cols-3 gap-[3%]">
+              <span class="ph-tile col-span-2"></span><span class="ph-tile"></span>
+              <span class="ph-tile"></span><span class="ph-tile col-span-2 ph-chart"></span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="flex h-full flex-col gap-[4%] p-[8%] pt-[18%]">
+          <span class="ph-bar h-[5%] w-1/2"></span>
+          <span class="ph-tile h-[38%]"></span>
+          <span class="ph-bar w-3/4 opacity-60"></span>
+          <span class="ph-bar w-2/3 opacity-60"></span>
+          <span class="ph-tile mt-auto h-[9%] ph-cta"></span>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .placeholder {
+    background:
+      radial-gradient(120% 80% at 80% 0%, hsl(var(--h) 70% 55% / 0.22), transparent 60%),
+      linear-gradient(180deg, hsl(var(--h) 30% 12%), hsl(var(--h) 35% 8%));
+  }
+  .ph-bar { display: block; height: 0.55rem; border-radius: 999px; background: hsl(var(--h) 40% 80% / 0.16); }
+  .ph-tile { display: block; border-radius: 0.6rem; background: hsl(var(--h) 40% 80% / 0.07); border: 1px solid hsl(var(--h) 50% 80% / 0.1); }
+  .ph-chart {
+    background:
+      linear-gradient(to top, hsl(var(--h) 80% 70% / 0.35) 0 2px, transparent 2px),
+      repeating-linear-gradient(90deg, transparent 0 12%, hsl(var(--h) 80% 70% / 0.25) 12% 18%),
+      hsl(var(--h) 40% 80% / 0.05);
+    mask-image: linear-gradient(to top, #000 70%, transparent);
+  }
+  .ph-cta { background: hsl(var(--h) 80% 68% / 0.5); border: 0; }
+</style>

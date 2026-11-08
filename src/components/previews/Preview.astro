@@ -1,0 +1,13 @@
+---
+import RedisenaPreview from './RedisenaPreview.astro';
+import PedidosPreview from './PedidosPreview.astro';
+import GeoconexionPreview from './GeoconexionPreview.astro';
+import PmhcPreview from './PmhcPreview.astro';
+import type { Project } from '../../data/projects';
+
+interface Props { slug: Project['slug']; orientation: 'landscape' | 'portrait' }
+const { slug, orientation } = Astro.props;
+const map = { redisena: RedisenaPreview, pedidos: PedidosPreview, geoconexion: GeoconexionPreview, pmhc: PmhcPreview };
+const C = map[slug];
+---
+<C orientation={orientation} />

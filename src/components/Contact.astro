@@ -1,0 +1,98 @@
+---
+// Contacto: canales directos + formulario que arma el mensaje y lo abre en el correo
+// o en WhatsApp. No necesita backend, así que funciona en GitHub Pages.
+import Mail from '@lucide/astro/icons/mail';
+import MessageCircle from '@lucide/astro/icons/message-circle';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import { contact } from '../data/contact';
+
+const kinds = ['Sitio web', 'Tienda o pedidos online', 'Automatización de procesos', 'Datos o dashboard', 'Capacitación en IA', 'Otro'];
+const budgets = ['Aún no lo sé', 'Hasta $200.000', '$200.000 a $300.000', '$300.000 a $400.000', 'Más de $400.000'];
+const input = 'w-full rounded-xl border border-line bg-ink px-4 py-3 text-fg placeholder:text-muted/70 transition focus:border-signal focus:outline-none focus:ring-2 focus:ring-signal/30';
+---
+<section id="contacto" class="relative isolate overflow-hidden border-t border-line py-24 sm:py-32" aria-labelledby="contacto-title">
+  <div class="dot-grid pointer-events-none absolute inset-0 -z-10 opacity-70" aria-hidden="true"></div>
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-14 px-4 sm:px-6 lg:grid-cols-12 lg:gap-12">
+    <div class="min-w-0 lg:col-span-5">
+      <h2 id="contacto-title" class="font-display text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
+        Conversemos tu proyecto
+      </h2>
+      <p class="mt-4 max-w-[44ch] text-lg text-muted text-pretty">
+        Cuéntame qué necesitas y te respondo con una propuesta concreta. La primera conversación no tiene costo.
+      </p>
+
+      <ul class="mt-10 divide-y divide-line border-y border-line">
+        {contact.whatsapp && (
+          <li><a class="group flex items-center gap-4 py-4" href={`https://wa.me/${contact.whatsapp}`} target="_blank" rel="noopener">
+            <MessageCircle class="size-5 text-signal" aria-hidden="true" />
+            <span class="flex-1"><span class="block font-semibold">WhatsApp</span><span class="text-sm text-muted">Respuesta más rápida</span></span>
+            <ArrowUpRight class="size-4 text-muted transition group-hover:text-fg" aria-hidden="true" />
+          </a></li>
+        )}
+        <li><a class="group flex items-center gap-4 py-4" href={`mailto:${contact.email}`}>
+          <Mail class="size-5 text-signal" aria-hidden="true" />
+          <span class="min-w-0 flex-1"><span class="block font-semibold">Correo</span><span class="block truncate text-sm text-muted">{contact.email}</span></span>
+          <ArrowUpRight class="size-4 text-muted transition group-hover:text-fg" aria-hidden="true" />
+        </a></li>
+      </ul>
+
+      <p class="mt-6 text-sm text-muted">
+        {contact.location}. También en{' '}<a class="font-semibold text-fg underline decoration-line underline-offset-4 hover:decoration-fg" href={contact.linkedin} target="_blank" rel="noopener">LinkedIn</a>{' '}y{' '}<a class="font-semibold text-fg underline decoration-line underline-offset-4 hover:decoration-fg" href={contact.github} target="_blank" rel="noopener">GitHub</a>.
+      </p>
+    </div>
+
+    <form class="glass min-w-0 rounded-2xl p-5 sm:p-8 lg:col-span-7" data-contact-form data-email={contact.email} data-whatsapp={contact.whatsapp} novalidate>
+      <div class="grid gap-6">
+        <div class="grid gap-6 sm:grid-cols-2">
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold">Tu nombre</span>
+            <input class={input} name="nombre" autocomplete="name" required placeholder="Ej: Camila Rojas" />
+          </label>
+          <label class="grid gap-2">
+            <span class="text-sm font-semibold">Empresa <span class="font-normal text-muted">(opcional)</span></span>
+            <input class={input} name="empresa" autocomplete="organization" placeholder="Ej: Constructora Andes" />
+          </label>
+        </div>
+
+        <fieldset class="grid gap-3">
+          <legend class="mb-3 text-sm font-semibold">¿Qué necesitas?</legend>
+          <div class="flex flex-wrap gap-2">
+            {kinds.map((k) => (
+              <label class="relative">
+                <input type="checkbox" name="tipo" value={k} class="peer absolute inset-0 cursor-pointer opacity-0" />
+                <span class="inline-flex min-h-10 items-center rounded-full border border-line bg-ink px-4 text-[0.92rem] text-muted transition peer-checked:border-signal peer-checked:bg-signal/12 peer-checked:text-fg peer-hover:text-fg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-signal">{k}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <label class="grid gap-2">
+          <span class="text-sm font-semibold">Presupuesto aproximado</span>
+          <select class={input} name="presupuesto" aria-describedby="presupuesto-nota">
+            {budgets.map((b) => <option value={b}>{b}</option>)}
+          </select>
+          <span id="presupuesto-nota" class="text-sm text-muted">Valores en pesos chilenos. Emito boleta de honorarios.</span>
+        </label>
+
+        <label class="grid gap-2">
+          <span class="text-sm font-semibold">Cuéntame del proyecto</span>
+          <textarea class={`${input} min-h-32 resize-y`} name="mensaje" required placeholder="Qué quieres lograr, para cuándo y si ya tienes algo hecho."></textarea>
+        </label>
+
+        <div class="flex flex-wrap gap-3">
+          {contact.whatsapp && (
+            <button type="submit" value="whatsapp" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-signal px-5 py-3 font-semibold text-ink transition hover:bg-fg sm:flex-none">
+              <MessageCircle class="size-4" aria-hidden="true" /> Enviar por WhatsApp
+            </button>
+          )}
+          <button type="submit" value="email" class:list={['inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition sm:flex-none', contact.whatsapp ? 'border border-line hover:border-signal/60 hover:bg-white/5' : 'bg-signal text-ink hover:bg-fg']}>
+            <Mail class="size-4" aria-hidden="true" /> Enviar por correo
+          </button>
+        </div>
+        <p class="min-h-6 text-sm text-muted" role="status" aria-live="polite" data-contact-status>
+          Se abrirá tu app de {contact.whatsapp ? 'WhatsApp o correo' : 'correo'} con el mensaje listo para enviar.
+        </p>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,14 @@
+---
+import { contact } from '../data/contact';
+const year = new Date().getFullYear();
+---
+<footer class="border-t border-line">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <p><span class="font-display font-semibold text-fg">Víctor Salazar Cofré</span> · Desarrollo web y automatización · {year}</p>
+    <ul class="flex gap-5">
+      <li><a class="hover:text-fg" href={`mailto:${contact.email}`}>Correo</a></li>
+      <li><a class="hover:text-fg" href={contact.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a class="hover:text-fg" href={contact.github} target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</footer>

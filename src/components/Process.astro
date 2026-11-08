@@ -1,0 +1,60 @@
+---
+// Proceso de trabajo: una secuencia real, por eso va numerada.
+// La línea que une las etapas se completa con el scroll (solo en navegadores que lo soportan).
+const steps = [
+  { t: 'Diagnóstico', d: 'Conversamos sobre tu negocio y el problema. Reviso cómo trabajas hoy y qué se puede mejorar.', get: 'Propuesta con alcance, plazos y valor' },
+  { t: 'Prototipo', d: 'Antes de programar todo, valido contigo la estructura y el diseño de lo principal.', get: 'Prototipo navegable para comentar' },
+  { t: 'Desarrollo', d: 'Construyo por etapas y publico cada avance en un link de prueba para que lo revises.', get: 'Avances visibles cada semana' },
+  { t: 'Lanzamiento', d: 'Dominio, SEO técnico, analítica y pruebas en móvil y escritorio antes de publicar.', get: 'Sitio o flujo en producción' },
+  { t: 'Acompañamiento', d: 'Capacito a tu equipo para usarlo y quedo disponible para ajustes y mejoras.', get: 'Capacitación y soporte' },
+];
+---
+<section id="proceso" class="relative border-t border-line py-24 sm:py-32" aria-labelledby="proceso-title">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6">
+    <div class="max-w-2xl">
+      <h2 id="proceso-title" class="font-display text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.05] tracking-[-0.03em]">
+        Cómo trabajamos
+      </h2>
+      <p class="mt-4 text-lg text-muted text-pretty">
+        Cinco etapas con un entregable claro en cada una. Sabes en qué está tu proyecto en todo momento.
+      </p>
+    </div>
+
+    <ol class="process relative mt-16 grid gap-10 lg:grid-cols-5 lg:gap-6">
+      <span class="process-track" aria-hidden="true"><span class="process-fill"></span></span>
+      {steps.map((s, i) => (
+        <li class="relative pl-14 lg:pl-0 lg:pt-16">
+          <span class="absolute left-0 top-0 grid size-10 place-items-center rounded-full border border-signal/50 bg-ink font-display text-lg font-semibold text-signal">
+            {i + 1}
+          </span>
+          <h3 class="pt-1.5 font-display text-xl font-semibold tracking-[-0.02em] lg:pt-0">{s.t}</h3>
+          <p class="mt-2 text-[0.97rem] text-muted text-pretty">{s.d}</p>
+          <p class="mt-4 inline-flex items-start gap-2 rounded-lg border border-line bg-ink-2/70 px-3 py-2 text-sm">
+            <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-live" aria-hidden="true"></span>
+            <span><span class="text-muted">Recibes: </span>{s.get}</span>
+          </p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .process-track {
+    position: absolute; left: 1.25rem; top: 2.5rem; bottom: 0; width: 1px;
+    background: var(--color-line); overflow: hidden;
+  }
+  .process-fill { position: absolute; inset: 0; background: linear-gradient(var(--color-signal), var(--color-signal-deep)); transform-origin: top; }
+  @media (min-width: 1024px) {
+    .process-track { left: 2.75rem; right: 0; top: 1.25rem; bottom: auto; width: auto; height: 1px; }
+    .process-fill { transform-origin: left; }
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .process-fill { animation: fill-y linear both; animation-timeline: view(); animation-range: entry 20% cover 55%; }
+      @media (min-width: 1024px) { .process-fill { animation-name: fill-x; } }
+    }
+  }
+  @keyframes fill-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes fill-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+</style>

@@ -1,0 +1,21 @@
+---
+const links = [
+  { href: '#proyectos', label: 'Proyectos' },
+  { href: '#capacidades', label: 'Capacidades' },
+  { href: '#proceso', label: 'Proceso' },
+  { href: '#contacto', label: 'Contacto' },
+];
+---
+<header class="fixed inset-x-0 top-0 z-50">
+  <nav class="mx-auto mt-3 flex max-w-6xl items-center justify-between gap-4 rounded-2xl px-4 py-2.5 sm:px-5 glass shadow-none" aria-label="Principal">
+    <a href="#inicio" class="font-display text-lg font-semibold tracking-tight">
+      Víctor Salazar<span class="text-signal">.</span>
+    </a>
+    <ul class="hidden items-center gap-7 text-[0.95rem] text-muted md:flex">
+      {links.map((l) => <li><a class="transition hover:text-fg" href={l.href}>{l.label}</a></li>)}
+    </ul>
+    <a href="#contacto" class="rounded-xl bg-fg px-3.5 py-2 text-sm font-semibold text-ink transition hover:bg-signal">
+      Cotiza tu proyecto
+    </a>
+  </nav>
+</header>
