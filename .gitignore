@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# Sitio anterior (queda en el historial de git) y archivos locales
+_legacy/
+
+# Notas en Markdown fuera del repo (solo se publica el README)
+*.md
+!README.md
